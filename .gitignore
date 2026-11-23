@@ -3,3 +3,7 @@ __pycache__/
 data/
 .qwen/
 *.tmp
+pdf_structure.txt
+experiments/make_report.py
+experiments/make_report_blueprint.py
+results/TUGAS_DL_SESI07_2802467382_WISELY_JANSON_HALIM.pdf
