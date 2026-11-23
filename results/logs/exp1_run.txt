@@ -1,0 +1,21 @@
+[MLP] epoch   1  ce=0.5367  test_acc=0.8444  (1.5s)
+[MLP] epoch   2  ce=0.3838  test_acc=0.8507  (1.3s)
+[MLP] epoch   3  ce=0.3447  test_acc=0.8637  (1.3s)
+[MLP] epoch   4  ce=0.3188  test_acc=0.8697  (1.3s)
+[MLP] epoch   5  ce=0.2993  test_acc=0.8689  (1.3s)
+[MLP] epoch   6  ce=0.2815  test_acc=0.8760  (1.3s)
+[MLP] epoch   7  ce=0.2689  test_acc=0.8809  (1.3s)
+[MLP] epoch   8  ce=0.2598  test_acc=0.8750  (1.4s)
+[MLP] epoch   9  ce=0.2467  test_acc=0.8837  (1.4s)
+[MLP] epoch  10  ce=0.2360  test_acc=0.8844  (1.3s)
+[Stage 2] class W^T: MSE=0.1756 PSNR=7.56 SSIM=0.0526
+[Stage 3] latent W^T: MSE=0.4147 PSNR=3.82 SSIM=0.0565
+[FrozenDec] epoch   1  mse=0.11866 (1.7s)
+[FrozenDec] epoch  10  mse=0.06509 (3.5s)
+[FrozenDec] epoch  20  mse=0.06184 (3.2s)
+[FrozenDec] epoch  30  mse=0.06053 (2.9s)
+[FrozenDec] epoch  40  mse=0.05983 (5.4s)
+[FrozenDec] epoch  50  mse=0.05935 (3.1s)
+[Stage 4] frozen decoder: MSE=0.0155 PSNR=18.11 SSIM=0.6860
+[Stage 5] prior sampling done (see Figur 3 panel 4).
+Saved results/logs/exp1_mlp_proof.json

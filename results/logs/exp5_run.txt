@@ -1,0 +1,30 @@
+[recon] Vanilla AE: MSE=0.00692 PSNR=21.60 SSIM=0.8208
+[recon] Sparse AE: MSE=0.00737 PSNR=21.33 SSIM=0.8108
+[recon] VAE: MSE=0.01181 PSNR=19.28 SSIM=0.7271
+[recon] Frozen MLP Decoder: MSE=0.01545 PSNR=18.11 SSIM=0.6860
+[latency] Vanilla AE: 0.95 +/- 0.24 ms
+[latency] Sparse AE: 1.19 +/- 0.36 ms
+[latency] VAE: 1.20 +/- 0.35 ms
+[latency] Vanilla GAN: 0.82 +/- 0.27 ms
+[latency] DCGAN: 4.38 +/- 5.53 ms
+[latency] Frozen MLP Decoder: 1.00 +/- 0.38 ms
+[latency] DDPM: 2824.72 +/- 224.68 ms
+[FID] VAE: 79.42
+[FID] Vanilla GAN: 120.09
+[FID] DCGAN: 11.53
+[FID] DDPM: 39.28
+Saved C:\Users\User\Documents\dl-generative-models\results\figures\Figur1_Reconstruction_Comparison.png
+Saved C:\Users\User\Documents\dl-generative-models\results\figures\Figur2_Random_Generative_Sampling.png
+Saved C:\Users\User\Documents\dl-generative-models\results\figures\Figur3_MLP_Limitation_Proof.png
+Saved C:\Users\User\Documents\dl-generative-models\results\figures\Figur4_Latent_Interpolation.png
+Saved C:\Users\User\Documents\dl-generative-models\results\figures\Figur5_Loss_Curves_and_DDPM_Trajectory.png
+                    latent_dim  train_time_per_epoch_s  latency_ms_batch64  test_mse  test_psnr_db  test_ssim         fid
+model                                                                                                                    
+Vanilla AE                  64                3.802823            0.953904  0.006917     21.600654   0.820848         NaN
+Sparse AE                   64                3.202927            1.193028  0.007369     21.325833   0.810783         NaN
+VAE                         64                4.094900            1.200282  0.011808     19.278291   0.727094   79.415550
+Vanilla GAN                100                7.260131            0.821096       NaN           NaN        NaN  120.086540
+DCGAN                      100               15.040693            4.375296       NaN           NaN        NaN   11.526679
+DDPM                       784               34.197892         2824.723280       NaN           NaN        NaN   39.281567
+Frozen MLP Decoder          64                3.058571            1.003132  0.015454     18.109501   0.685993         NaN
+Evaluation complete.

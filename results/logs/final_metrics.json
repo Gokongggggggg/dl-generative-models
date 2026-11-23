@@ -1,0 +1,72 @@
+{
+  "Vanilla AE": {
+    "test_mse": 0.006917268503457308,
+    "test_psnr_db": 21.60065366246045,
+    "test_ssim": 0.8208484512254786,
+    "latent_dim": 64,
+    "train_time_per_epoch_s": 3.80282294199802,
+    "latency_ms_batch64": 0.9539039968512952,
+    "latency_std_ms": 0.23853805390788477,
+    "fid": null
+  },
+  "Sparse AE": {
+    "test_mse": 0.007369138300418854,
+    "test_psnr_db": 21.325832927722104,
+    "test_ssim": 0.8107827671940663,
+    "latent_dim": 64,
+    "train_time_per_epoch_s": 3.202927212000359,
+    "latency_ms_batch64": 1.193027999252081,
+    "latency_std_ms": 0.35698158375751643,
+    "fid": null
+  },
+  "VAE": {
+    "test_mse": 0.011807852424681187,
+    "test_psnr_db": 19.278290833282096,
+    "test_ssim": 0.7270938843295437,
+    "latent_dim": 64,
+    "train_time_per_epoch_s": 4.094900429999688,
+    "latency_ms_batch64": 1.2002820009365678,
+    "latency_std_ms": 0.3475494120237521,
+    "fid": 79.4155502319336
+  },
+  "Frozen MLP Decoder": {
+    "test_mse": 0.015454321168363094,
+    "test_psnr_db": 18.109500665831277,
+    "test_ssim": 0.6859925933142172,
+    "latent_dim": 64,
+    "train_time_per_epoch_s": 3.058570635993965,
+    "latency_ms_batch64": 1.0031319945119321,
+    "latency_std_ms": 0.37968361529283196,
+    "fid": null
+  },
+  "Vanilla GAN": {
+    "latent_dim": 100,
+    "train_time_per_epoch_s": 7.260131026999443,
+    "latency_ms_batch64": 0.8210960030555725,
+    "latency_std_ms": 0.26931807761116083,
+    "fid": 120.08654022216797,
+    "test_mse": null,
+    "test_psnr_db": null,
+    "test_ssim": null
+  },
+  "DCGAN": {
+    "latent_dim": 100,
+    "train_time_per_epoch_s": 15.040692721246888,
+    "latency_ms_batch64": 4.375295996433124,
+    "latency_std_ms": 5.527724273644258,
+    "fid": 11.526679039001465,
+    "test_mse": null,
+    "test_psnr_db": null,
+    "test_ssim": null
+  },
+  "DDPM": {
+    "latent_dim": 784,
+    "train_time_per_epoch_s": 34.197891968334446,
+    "latency_ms_batch64": 2824.7232800116763,
+    "latency_std_ms": 224.6763217767262,
+    "fid": 39.28156661987305,
+    "test_mse": null,
+    "test_psnr_db": null,
+    "test_ssim": null
+  }
+}

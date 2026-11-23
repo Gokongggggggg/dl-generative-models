@@ -1,0 +1,7 @@
+[sparse_ae] epoch   1 mse=0.09613 l1=47.1139 (4.1s)
+[sparse_ae] epoch  10 mse=0.03402 l1=30.3508 (3.9s)
+[sparse_ae] epoch  20 mse=0.03065 l1=23.8734 (3.6s)
+[sparse_ae] epoch  30 mse=0.02920 l1=20.4665 (1.4s)
+[sparse_ae] epoch  40 mse=0.02852 l1=18.3683 (1.5s)
+[sparse_ae] epoch  50 mse=0.02800 l1=17.0439 (4.6s)
+sparse AE retrained with sum-L1
