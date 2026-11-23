@@ -110,9 +110,12 @@ class GaussianDiffusion(nn.Module):
                 x = mean + self.posterior_var[i].sqrt() * torch.randn_like(x)
             else:
                 x = mean
-            x = x.clamp(-1, 1)
+            # intermediate x_t are ~N(0,1)-scaled at high t; clamping them
+            # truncates the noise distribution and biases the trajectory
             if trajectory_idx is not None and i in trajectory_idx:
                 trajectory[i] = x.clone()
+        x = x.clamp(-1, 1)
         if trajectory_idx is not None:
+            trajectory[0] = x.clone()
             return x, trajectory
         return x
