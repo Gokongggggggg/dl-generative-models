@@ -1,6 +1,6 @@
 """FashionMNIST: merge train+test (70k), normalize to [-1,1], split 80/10/10 with seed 42."""
 import torch
-from torch.utils.data import ConcatDataset, DataLoader, Subset
+from torch.utils.data import ConcatDataset, DataLoader, Subset, TensorDataset
 from torchvision import datasets, transforms
 
 from configs import config
@@ -17,6 +17,16 @@ def get_datasets():
     test_part = datasets.FashionMNIST(config.DATA_DIR, train=False, download=True, transform=tf)
     full = ConcatDataset([train_part, test_part])  # 70,000 images
     assert len(full) == 70000
+
+    # Materialize once: identical values, avoids per-epoch PIL transform overhead
+    cache = config.DATA_DIR / "fmnist_tensors.pt"
+    if cache.exists():
+        xs, ys = torch.load(cache, weights_only=True)
+    else:
+        xs = torch.stack([full[i][0] for i in range(len(full))])
+        ys = torch.tensor([full[i][1] for i in range(len(full))], dtype=torch.long)
+        torch.save((xs, ys), cache)
+    full = TensorDataset(xs, ys)
 
     n_train = int(config.TRAIN_FRAC * len(full))   # 56,000
     n_val = int(config.VAL_FRAC * len(full))       # 7,000

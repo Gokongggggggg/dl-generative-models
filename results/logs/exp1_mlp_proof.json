@@ -1,0 +1,23 @@
+{
+  "stage1_test_accuracy": 0.8844285714285715,
+  "stage1_train_time_per_epoch_s": 1.351077340001939,
+  "stage2_class_transpose": {
+    "mse": 0.1755543053150177,
+    "psnr": 7.5558851537762415,
+    "ssim": 0.05260673432022045
+  },
+  "stage3_latent_transpose": {
+    "mse": 0.4146629571914673,
+    "psnr": 3.8230475944158844,
+    "ssim": 0.0565269602557936
+  },
+  "stage4_train_time_per_epoch_s": 3.058570635993965,
+  "stage4_frozen_decoder_test": {
+    "mse": 0.015454322099685669,
+    "psnr": 18.109500404112733,
+    "ssim": 0.685992593807583
+  },
+  "stage5_prior_sample_mean_pixel": -0.46078741550445557,
+  "stage5_prior_sample_std_pixel": 0.7318630218505859,
+  "stage5_note": "Gaussian samples decoded through the frozen-latent decoder produce incoherent blobs: the discriminative latent space is not regularized into a smooth, space-filling prior, so N(mu_z, diag(sigma_z^2)) lands off the data manifold."
+}
