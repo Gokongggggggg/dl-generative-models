@@ -116,11 +116,52 @@ prior, Gaussian samples fall off the latent manifold and decode to incoherent bl
   images vs 5,000 generated samples, grayscale replicated to 3-channel RGB uint8 [0,255].
 - **Training time / epoch**: mean wall-clock seconds per epoch from the training logs.
 
-## 10. Results
+## 10. Results (Test Set, 7,000 images)
 
-<!-- RESULTS_TABLE -->
+| Model | Latent dim | Train s/epoch | Latency ms (batch 64) | Test MSE | Test PSNR (dB) | Test SSIM | FID |
+|:---|---:|---:|---:|---:|---:|---:|---:|
+| Vanilla AE | 64 | 3.80 | 0.95 | 0.0069 | 21.60 | 0.8208 | N/A |
+| Sparse AE | 64 | 3.20 | 1.19 | 0.0074 | 21.33 | 0.8108 | N/A |
+| VAE | 64 | 4.09 | 1.20 | 0.0118 | 19.28 | 0.7271 | 79.42 |
+| Vanilla GAN | 100 | 7.26 | 0.82 | N/A | N/A | N/A | 120.09 |
+| DCGAN | 100 | 15.04 | 4.38 | N/A | N/A | N/A | **11.53** |
+| DDPM | 784 | 34.20 | 2824.72 | N/A | N/A | N/A | 39.28 |
+| Frozen MLP Decoder | 64 | 3.06 | 1.00 | 0.0155 | 18.11 | 0.6860 | N/A |
 
-See `results/logs/final_metrics.csv` / `.json` and `results/logs/exp1_mlp_proof.json`.
+N/A = not applicable: GAN/DCGAN/DDPM have no encoder (no reconstruction); Vanilla/Sparse AE
+have no regularized prior (FID not meaningful). DDPM latency is the **full 300-step reverse
+loop** for a batch of 64; all others are a single forward pass. Latency measured with
+`torch.cuda.synchronize()` + `time.perf_counter()` after 10 warm-up iterations.
+
+### Part A — MLP limitation proof (`results/logs/exp1_mlp_proof.json`)
+
+| Stage | Result |
+|---|---|
+| 1. Classifier test accuracy | **88.44%** (>= 88% requirement met, epoch 10) |
+| 2. W^T from one-hot class y_c | MSE 0.1756, PSNR 7.56 dB, SSIM **0.053** (noise-like) |
+| 3. W^T from real z_MLP | MSE 0.4147, PSNR 3.82 dB, SSIM **0.057** (noise-like) |
+| 4. Trained decoder on frozen z_MLP | MSE 0.0155, PSNR 18.11 dB, SSIM 0.686 — worse than Vanilla AE (0.821) |
+| 5. z_rand ~ N(mu_z, diag(sigma_z^2)) | incoherent blobs, no object structure (Figur 3, panel 4) |
+
+### Empirical takeaways
+
+1. **Discriminative latents are not invertible by transposition.** Stages 2-3 give SSIM ~0.05:
+   ReLU destroys sign information and the classifier never learned a pixel-space inverse,
+   so W^T projections are meaningless as images.
+2. **A decoder can partially rescue frozen features, but not fully.** Stage 4 (SSIM 0.686)
+   beats transposition by far yet loses to the end-to-end Vanilla AE (0.821): the frozen
+   z_MLP discarded reconstruction-irrelevant detail that the classifier did not need.
+3. **No prior regularization => no generation.** Stage 5 Gaussian samples decode to blobs;
+   only the VAE (KL) and GANs/DDPM (adversarial / denoising objectives) shape a usable prior.
+4. **Reconstruction vs generation trade-off.** Vanilla AE reconstructs best (SSIM 0.821) but
+   cannot sample; VAE samples coherently at some reconstruction cost (0.727); DCGAN achieves
+   the best sample quality (FID 11.5); DDPM is second (39.3) with sharp, diverse samples but
+   ~3 s per batch of 64 (300 sequential network evaluations) vs ~4 ms for DCGAN.
+5. **Sparsity costs little reconstruction.** The L1-norm penalty (lambda=1e-4) shrinks
+   ||h||_1 from ~130 to ~17 with SSIM 0.811 vs 0.821 — a mild, controlled trade-off.
+
+Full precision values: `results/logs/final_metrics.csv` / `.json`,
+`results/logs/summary_table.md`, per-epoch curves in `results/logs/*_losses.json`.
 
 ## 11. Figures (results/figures/, 300 DPI)
 
@@ -134,5 +175,20 @@ See `results/logs/final_metrics.csv` / `.json` and `results/logs/exp1_mlp_proof.
 
 ## 12. Git History
 
-Incremental commits per milestone: scaffold -> Part A -> AE family -> GANs -> DDPM ->
-evaluation -> documentation.
+Incremental commits per milestone (local repository, no remote):
+
+```
+a230dfc Scaffold project: configs, seeded utils, 80/10/10 FashionMNIST split, metrics helpers
+6d0bfc4 Part A: MLP limitation proof, 5 stages (test acc 88.44%, W^T SSIM~0.05, frozen decoder SSIM 0.686)
+8a0ee31 Train Vanilla AE, Sparse AE (L1-norm lambda=1e-4 on 64-d bottleneck), VAE (sum-MSE + KL)
+0e74a5c Train Vanilla GAN (MLP, 100 epochs) and DCGAN (conv 28x28, 80 epochs) with BCEWithLogits
+b9af92b Evaluation script + figures 1/3/4 layout; fix checkpoint device placement and label clipping
+d4ed391 Train DDPM: U-Net + sinusoidal time emb, T=300 linear betas, 60 epochs
+cff2a55 Fix DDPM sampler: clamp only final x_0 (per-step clamping truncated the noise distribution)
+ba21fb6 Full evaluation: metrics, FID, Figur 1-5 @300DPI, summary tables
+(+ final documentation commit adding this README)
+```
+
+Note on the DDPM fix: clamping intermediate x_t to [-1,1] at every reverse step truncates
+the ~N(0,1) noise distribution at high t and collapses sample quality (FID 197); clamping
+only the final x_0 restores correct ancestral sampling (FID 39.3).
