@@ -1,0 +1,163 @@
+Blueprint struktur lengkap untuk laporan ilmiah PDF (**10–12 halaman**) mengikuti aturan sistematika dan pembagian halaman supaya proporsional serta bobot penilaiannya maksimal:
+
+### Konvensi Berkas & Format Dokumen
+
+* **Nama File Wajib:** `TUGAS_DL_SESI07_2802467382_WISELY_JANSON_HALIM.pdf`
+
+
+* **Target Panjang:** 10–12 halaman (idealnya pas di **11 halaman** dengan layout 1 kolom atau 2 kolom ala IEEE/NeurIPS, margin standar, font 10–11pt).
+
+
+* **Bahasa:** Bahasa Indonesia akademik dengan *technical terms* tetap dalam bahasa Inggris (misalnya *latent space*, *mode collapse*, *reparameterization trick*, *inductive bias*).
+
+---
+
+### Blueprint Struktur Halaman per Halaman (Target: 11 Halaman)
+
+#### **Halaman 1 — Bagian I: Identitas Penulis, Tautan Repositori & Abstrak**
+
+* **Header / Title Block:**
+* Judul Studi: *Studi Komparatif Empiris Model Generatif (Vanilla AE, Sparse AE, VAE, Vanilla GAN, DCGAN, dan DDPM) serta Pembuktian Batasan Teoretis Model Klasifikasi untuk Image Generation pada Dataset Fashion-MNIST*
+
+
+* **Identitas Lengkap:** Wisely Janson Halim | NIM: `2802467382` | Kelas: *(isi kode kelasmu di Binusmaya)*
+
+
+* **Tautan Repositori Publik GitHub:** `[https://github.com/gokong/](https://github.com/gokong/)...` *(wajib aktif, publik, dan dapat diklik)*
+
+
+* **Spesifikasi Hardware & Lingkungan Eksekusi:** Detail GPU lokal, versi PyTorch/CUDA, dan konfirmasi penetapan deterministic seed (`42`).
+
+
+
+
+* **Ringkasan Eksekutif / Abstrak (1 paragraf):** Konteks eksperimen terstandarisasi pada Fashion-MNIST (split 80/10/10) dan highlight temuan utama (perbandingan fidelitas rekonstruksi, FID score, latency, dan pembuktian kegagalan proyeksi balik MLP Classifier).
+
+
+
+#### **Halaman 2–3 — Bagian II: Landasan Teori, Desain Arsitektur, dan Formulasi Matematika**
+
+* **2.1 Diagram Skematik Arsitektur:**
+* Diagram alir atau blok arsitektur untuk **7 model**: MLP Classifier + 6 model generatif (Vanilla AE, Sparse AE, VAE, Vanilla GAN, DCGAN, DDPM).
+
+
+
+
+* **2.2 Tabel Konfigurasi Parameter Terstandarisasi:**
+* Tabel komparasi berisi: Nama Model, Layer Architecture, Dimensi Laten, Fungsi Aktivasi, Optimizer, Learning Rate, dan Jumlah Epoch.
+
+
+
+
+* **2.3 Formulasi Matematika Loss Function (Lengkap dengan Persamaan):**
+* **Vanilla AE:** $\mathcal{L}_{AE} = \frac{1}{N} \sum_{i=1}^{N} \Vert{}x_i - D_\phi(E_\theta(x_i))\Vert{}_2^2$
+* **Sparse AE:** $\mathcal{L}_{SAE} = \mathcal{L}_{AE} + \lambda \sum_{j} \vert{}h_j\vert{}$ (penalti regularisasi sparsity $L_1$ pada aktivasi laten)
+
+
+* **VAE (ELBO):** $\mathcal{L}_{VAE} = \mathbb{E}_{q_\phi(z\vert{}x)}[\log p_\theta(x\vert{}z)] - D_{KL}(q_\phi(z\vert{}x) \,\Vert{}\, \mathcal{N}(0, I))$ + penjelasan *reparameterization trick* $z = \mu + \sigma \odot \epsilon$
+* **Vanilla GAN & DCGAN (Minimax Game):** $\min_G \max_D V(D, G) = \mathbb{E}_{x \sim p_{data}}[\log D(x)] + \mathbb{E}_{z \sim p_z}[\log(1 - D(G(z)))]$
+* **DDPM (Noise Prediction Objective):** $\mathcal{L}_{simple} = \mathbb{E}_{t, x_0, \epsilon} \left[ \Vert{}\epsilon - \epsilon_\theta(\sqrt{\bar{\alpha}_t} x_0 + \sqrt{1 - \bar{\alpha}_t}\epsilon, t)\Vert{}_2^2 \right]$
+
+
+
+#### **Halaman 4–5 — Bagian III: Pembuktian Teoretis dan Empiris Batasan MLP Classifier**
+
+* **3.1 Analisis Matematis Tiga Batasan Utama:**
+* Pemodelan diskriminatif $P(y\vert{}x)$ via Cross-Entropy sebagai *information bottleneck* yang membuang variasi spasial intra-kelas.
+
+
+* Sifat aljabar linier matriks bobot persegi panjang $W^{(l)}$ yang non-ortogonal ($W^T W \neq I$, sehingga $W^T \neq W^{-1}$) serta sifat *non-invertible* fungsi aktivasi $\text{ReLU}(u) = \max(0, u)$ yang memotong informasi nilai negatif.
+
+
+* Ketiadaan regularisasi kerapatan probabilitas prior $P(z)$ pada ruang fitur laten $Z_{MLP}$ (terbentuknya *latent voids*).
+
+
+
+
+* **3.2 Hasil Empiris 5 Tahap Eksperimen & Tabel Komparasi $Z_{MLP}$ vs $Z_{AE}$:**
+* Laporan akurasi MLP Classifier ($\ge 88\%$).
+
+
+* Tabel komparasi **Test MSE, PSNR, dan SSIM** antara **Frozen Latent Decoder ($Z_{MLP}$)** vs **Vanilla Autoencoder ($Z_{AE}$)** berdimensi laten sama ($64$).
+
+
+* Penyisipan **Figur 3 (`Figur3_MLP_Limitation_Proof.png`)** beserta interpretasi visual dari keempat panelnya.
+
+
+
+
+
+#### **Halaman 6 — Bagian IV: Tabel Komparasi Metrik Numerik (Kompilasi Kuantitatif)**
+
+* **4.1 Protokol Evaluasi Test Set:** Penjelasan evaluasi objektif pada 7.000 citra Test Set yang belum pernah dilihat model, metode pengukuran *inference latency* (batch 64 dengan CUDA sync), dan protokol perhitungan FID Score.
+
+
+* **4.2 Tabel Komparasi Kuantitatif Utama (Sesuai Template Panduan):**
+* Kolom wajib: `Arsitektur Model` | `Dim Laten` | `Training Time / Epoch (s)` | `Inference Latency (ms / batch 64)` | `Test MSE` | `Test PSNR (dB)` | `Test SSIM` | `FID Score` | `Kestabilan Training`.
+
+
+* Baris: Vanilla AE, Sparse AE, VAE, Vanilla GAN, DCGAN, DDPM (lengkap dengan tanda `N/A` beserta alasannya sesuai template).
+
+
+
+
+
+#### **Halaman 7–8 — Bagian V: Kompilasi Lima Visualisasi Komparatif Utama**
+
+* Setiap figur disajikan dengan resolusi tinggi, label jelas, caption resmi, dan paragraf analisis visual langsung di bawahnya:
+
+
+* **Figur 1:** *Grid Rekonstruksi Side-by-Side* (8 sampel Test Set: Ground Truth vs Vanilla AE vs Sparse AE vs VAE).
+
+
+* **Figur 2:** *Grid Random Generative Sampling* ($4 \times 4$ untuk VAE, Vanilla GAN, DCGAN, dan DDPM).
+
+
+* **Figur 4:** *Linear Latent Space Interpolation* ($\alpha \in [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]$ antar 2 kelas kontras pada Vanilla AE, Sparse AE, VAE, Vanilla GAN, DCGAN).
+
+
+* **Figur 5:** *Training Loss Curves (6 Model) dan DDPM Reverse Denoising Trajectory ($x_T \rightarrow x_0$)*.
+
+
+* *(Catatan: Figur 3 sudah tampil di Bagian III, atau bisa direferensikan silang di Bagian V agar alur bacanya mulus)*.
+
+
+
+
+
+#### **Halaman 9–11 — Bagian VI: Pembahasan Kritis, Jawaban Q1–Q6, dan Rekomendasi Industri**
+
+* Susun secara terstruktur menjawab **Q1 sampai Q6** secara mendalam dengan mengaitkan **formulasi matematis loss function** ke **bukti metrik & visual**:
+* **6.1 Analisis Q1 (Reconstruction Fidelity vs Generative Quality):** Trade-off penalti sparsity $\lambda \Vert{}h\Vert{}_1$ terhadap MSE/PSNR/SSIM pada Sparse AE vs Vanilla AE, serta perbandingan FID Score antarmodel generatif.
+
+
+* **6.2 Analisis Q2 (Blurriness vs Sharp Edges & Representasi Fitur):** Pembuktian matematis mengapa MSE/BCE mengestimasi ekspektasi kondisional $\mathbb{E}[x\vert{}z]$ (menghasilkan rata-rata piksel yang kabur), sedangkan minimisasi divergensi Jensen-Shannon $D_{JS}(P_{data} \Vert{} P_g)$ pada GAN memaksa generator menghasilkan tepi tajam. Analisis representasi fitur terlokalisasi (*part-based features*) pada Sparse AE.
+
+
+* **6.3 Analisis Q3 (Stabilitas Training, Arsitektur & Generative Trilemma):** Dinamika kurva loss Vanilla GAN vs DCGAN (peran *strided convolutions*, *BatchNorm*, dan *LeakyReLU* dalam memitigasi *mode collapse* & *vanishing gradient*), stabilitas *supervised noise prediction* pada DDPM, serta evaluasi empiris **Generative Trilemma** (*Sample Quality*, *Sampling Speed* via latency batch 64, dan *Mode Coverage*).
+
+
+* **6.4 Analisis Q4 (Struktur Latent Space & Eksperimen Interpolasi):** Analisis transisi semantik mulus pada VAE/DCGAN vs kemunculan artefak rusak pada Vanilla AE/Sparse AE akibat melintasi *latent space voids* (ketiadaan regularisasi KL divergence).
+
+
+* **6.5 Analisis Q5 (Sintesis Pembuktian Batasan MLP Classifier):** Rangkuman kausalitas matematis dan empiris dari Bagian III ($P(y\vert{}x)$, $W^T \neq W^{-1}$, tanpa prior $P(z)$).
+
+
+* **6.6 Analisis Q6 (Sintesis Rekayasa & Rekomendasi Deployment Industri):**
+1. *Deteksi anomali inspeksi manufaktur:* Pilihan antara Vanilla AE vs Sparse AE berdasarkan sensitivitas *reconstruction error* terhadap cacat lokal.
+
+
+2. *Filter avatar real-time mobile (<30 ms):* Pilihan antara Vanilla GAN, DCGAN, vs VAE berdasarkan anggaran *latency* batch/single-image dan ketajaman visual.
+
+
+3. *Pembuatan aset visual berfidelitas tinggi industri kreatif:* Pilihan antara DCGAN vs DDPM berdasarkan FID score, *mode coverage*, dan toleransi waktu komputasi.
+
+
+
+
+
+
+
+---
+
+Kalau agent-nya sudah selesai running eksperimen dan kamu sudah punya **file JSON metrik + 5 PNG figur**, tinggal drop ke sini—nanti saya bantu generate langsung file PDF finalnya (`TUGAS_DL_SESI07_2802467382_WISELY_JANSON_HALIM.pdf`) dengan tata letak akademik yang rapi dan pas 10–12 halaman.
