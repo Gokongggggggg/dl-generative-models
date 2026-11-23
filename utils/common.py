@@ -48,7 +48,8 @@ def save_checkpoint(model, name, extra=None):
 
 
 def load_checkpoint(model, name, device=None, key="state_dict"):
+    device = device or config.DEVICE
     payload = torch.load(config.CKPT_DIR / f"{name}.pt",
-                         map_location=device or config.DEVICE, weights_only=True)
+                         map_location=device, weights_only=True)
     model.load_state_dict(payload[key] if key in payload else payload)
-    return model
+    return model.to(device)

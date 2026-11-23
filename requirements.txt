@@ -5,6 +5,7 @@ scipy
 scikit-image
 matplotlib
 pandas
+tabulate
 tqdm
 torchmetrics[image]>=1.0
 torch-fidelity
