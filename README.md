@@ -84,7 +84,9 @@ Each script is deterministic (seed 42) and writes checkpoints/loss logs incremen
 | DDPM | U-Net (28->14->7, ResBlocks + GroupNorm, sinusoidal time emb., 1.78M params), eps-prediction | x_T = 784 | MSE(eps_theta, eps) | 60 |
 
 DDPM schedule: **T = 300**, linear beta from 1e-4 to 0.02; full ancestral reverse
-loop (x_T -> x_0) with posterior variance and clamping to [-1, 1].
+loop (x_T -> x_0) with posterior variance. Only the final x_0 is clamped to [-1, 1]:
+clamping intermediate x_t at every step would truncate the ~N(0,1) noise distribution
+at high t and collapse sample quality.
 Adam everywhere; GANs use lr 2e-4, betas (0.5, 0.999); DCGAN uses standard
 N(0, 0.02) conv init.
 
@@ -173,22 +175,3 @@ Full precision values: `results/logs/final_metrics.csv` / `.json`,
 | `Figur4_Latent_Interpolation.png` | z(alpha) = (1-alpha) z_A + alpha z_B, alpha in {0, .2, .4, .6, .8, 1}, 5 models |
 | `Figur5_Loss_Curves_and_DDPM_Trajectory.png` | loss curves for all 6 models (G/D separate) + DDPM x_T -> x_0 trajectory |
 
-## 12. Git History
-
-Incremental commits per milestone (local repository, no remote):
-
-```
-a230dfc Scaffold project: configs, seeded utils, 80/10/10 FashionMNIST split, metrics helpers
-6d0bfc4 Part A: MLP limitation proof, 5 stages (test acc 88.44%, W^T SSIM~0.05, frozen decoder SSIM 0.686)
-8a0ee31 Train Vanilla AE, Sparse AE (L1-norm lambda=1e-4 on 64-d bottleneck), VAE (sum-MSE + KL)
-0e74a5c Train Vanilla GAN (MLP, 100 epochs) and DCGAN (conv 28x28, 80 epochs) with BCEWithLogits
-b9af92b Evaluation script + figures 1/3/4 layout; fix checkpoint device placement and label clipping
-d4ed391 Train DDPM: U-Net + sinusoidal time emb, T=300 linear betas, 60 epochs
-cff2a55 Fix DDPM sampler: clamp only final x_0 (per-step clamping truncated the noise distribution)
-ba21fb6 Full evaluation: metrics, FID, Figur 1-5 @300DPI, summary tables
-(+ final documentation commit adding this README)
-```
-
-Note on the DDPM fix: clamping intermediate x_t to [-1,1] at every reverse step truncates
-the ~N(0,1) noise distribution at high t and collapses sample quality (FID 197); clamping
-only the final x_0 restores correct ancestral sampling (FID 39.3).
